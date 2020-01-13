@@ -17,17 +17,46 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r directory}
 setwd("C:/Users/olvic/OneDrive - Université Laval/Doc/Data/Gaspésie/Analyses/Data")
+
+#load data
+regen <- read.table("regen_0herb.txt", header = TRUE)
+str(regen)
+
+regen$Site<-as.factor(regen$Site)
+regen$Freq<-as.numeric(regen$Freq)
+```
+Loaded regen file with ferns,raspberries, herbaceous removed
+
+
+basic summary functions
+```{r summarize data, eval=FALSE}
+summary(regen)
+
+library(Hmisc)
+Hmisc::describe(regen)
+
+library(skimr)
+skim(regen)
+
+library(summarytools)
+summarytools::descr(regen)
+dfSummary(regen)
 ```
 
-Load regen file with ferns,raspberries, herbaceous removed
-```{r load regen data}
-gapmaker <- read.table("regen_0herb.txt", header = TRUE)
-str(gapmaker)
+
+Summarize CEDAR data
+```{r summarize cedar}
+library(dplyr)
+
+#regen %>%
+ # filter(Species=="THO") %>%
+  #select(Ht_cat, Freq, Browse_cat, Pred)
+
+regen %>%
+  filter(Species=="THO") %>%
+  group_by(Site, Gap)%>%
+  summarize(freq=sum(Freq))
+            
 
 ```
 
-```{r summarize data}
-
-
-
-```

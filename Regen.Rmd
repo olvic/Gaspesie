@@ -2,7 +2,10 @@
 title: "Gas_regen_multi"
 author: "Olvic"
 date: "09/01/2020"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -88,6 +91,41 @@ gapp
 
 
 ## Summarize regeneration
+```{r, echo=FALSE}
+allreg<-regen %>%
+  group_by(Site, Gap, Species)%>%
+  summarize(max=max(Freq), min=min(Freq), mean=mean(Freq), med=median(Freq), sum=sum(Freq))
+allregsummary<-allreg%>%
+  group_by(Species)%>%
+  summarize(max=max(sum), min=min(sum), mean=mean(sum), med=median(sum), sum=sum(sum))
+print(allregsummary, n=40)
+```
+
+## Summarize browsing
+```{r, echo=FALSE}
+browse<-regen%>%
+  filter(Species==c("BOJ","SAB", "THO", "NOL", "ERE", "ERP"))%>%
+  group_by(Species, Ht_cat, Pred)%>%
+  summarize(max=max(Browse_cat), min=min(Browse_cat), mean=mean(Browse_cat), med=median(Browse_cat), freq=sum(Freq))
+print(browse, n=60)
+```
+
+```{r}
+library(ggplot2)
+#proportion of stems
+#ggplot(data=browse, aes(x=Species, y=freq))+
+ # geom_point(aes(colour=Ht_cat, shape=Pred))
+tho<-browse%>%
+  filter(Species=="THO")
+ggplot(data=tho, aes(x=Ht_cat, y=freq))+
+ geom_point(aes(colour=Pred, size=3))
+
+sab<-browse%>%
+  filter(Species=="SAB")
+ggplot(data=sab, aes(x=Ht_cat, y=freq))+
+ geom_point(aes(colour=Pred, size=3))
+```
+
 
 
 ## Summarize gap data

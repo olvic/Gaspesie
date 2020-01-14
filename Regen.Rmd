@@ -15,7 +15,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r directory}
+```{r directory, echo =FALSE}
 setwd("C:/Users/olvic/OneDrive - Université Laval/Doc/Data/Gaspésie/Analyses/Data")
 
 #load data
@@ -29,7 +29,7 @@ Loaded regen file with ferns,raspberries, herbaceous removed
 
 
 basic summary functions
-```{r summarize data, eval=FALSE}
+```{r summarize data, eval=FALSE, echo=FALSE}
 summary(regen)
 
 library(Hmisc)
@@ -44,19 +44,67 @@ dfSummary(regen)
 ```
 
 
-Summarize CEDAR data
-```{r summarize cedar}
+## Summarize CEDAR data
+```{r summarize cedar, echo=FALSE}
 library(dplyr)
 
 #regen %>%
  # filter(Species=="THO") %>%
   #select(Ht_cat, Freq, Browse_cat, Pred)
 
-regen %>%
+reg<-regen %>%
   filter(Species=="THO") %>%
   group_by(Site, Gap)%>%
   summarize(freq=sum(Freq))
-            
 
+reg
+
+```
+### By plot
+```{r echo=FALSE}
+## Par parcelle
+regen %>%
+  filter(Species=="THO") %>%
+  summarize(max=max(Freq), min=min(Freq), mean=mean(Freq), med=median(Freq))
+
+
+```
+### by gap
+```{r, echo=FALSE}
+#Par trouée
+gap<-regen %>%
+  filter(Species=="THO") %>%
+  group_by(Site, Gap)%>%
+  summarize(sum=sum(Freq))
+
+gapp<-data.frame(matrix(ncol=4, nrow=1))
+colnames(gapp)<-c("max","min","mean","median")
+gapp$max<-max(gap$sum)
+gapp$min<-min(gap$sum)
+gapp$mean<-mean(gap$sum)
+gapp$median<-median(gap$sum)
+gapp
+```
+
+
+## Summarize regeneration
+
+
+## Summarize gap data
+```{r load gap data, echo=FALSE}
+setwd("C:/Users/olvic/OneDrive - Université Laval/Doc/Data/Gaspésie/Analyses/Data")
+
+gaps <- read.table("troueee.txt", header = TRUE)
+
+gaps$Site<-as.factor(gaps$Site)
+str(gaps)
+```
+
+```{r, echo=FALSE}
+library(stargazer)
+cols<-colnames(gaps)
+stargazer(gaps[, cols], type="text",
+          summary.stat = c("min", "max", "mean", "median", "sd"))
+ 
 ```
 
